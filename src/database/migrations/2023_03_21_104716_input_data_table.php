@@ -20,6 +20,7 @@ return new class extends Migration
             $table->integer('hours');
             $table->integer('languages');
             $table->integer('contents');
+            $table->integer('user');
             $table->timestamps();
         });
     }

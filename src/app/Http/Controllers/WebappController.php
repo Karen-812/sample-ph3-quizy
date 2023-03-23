@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\InputData;
 use Illuminate\Support\Facade;
+use Illuminate\Support\Facades\Auth;
 // Carbon
 // require_once __DIR__ . '/vendor/autoload.php';
 use Carbon\Carbon;
@@ -13,25 +14,25 @@ use Carbon\Carbon;
 
 class WebappController extends Controller
 {
-    // public function __construct(){
-    //     $this->middleware('auth');
-    // }
-
+    
     public function index(Request $request)
     {
+        $id = Auth::id();
+        $user_name = Auth::user()->name;
+
         // 現在の時刻からインスタンスを生成
         $current_year = Carbon::now()->format('Y');
         $current_month = Carbon::now()->format('m');
         $today = Carbon::now()->format('d');
 
         // トータル時間
-        $total_sum = InputData::sum('hours');
+        $total_sum = InputData::where('user', $id)->sum('hours');
 
         // 今月の合計時間
-        $month_sum = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)->sum('hours');
+        $month_sum = InputData::where('user', $id)->whereYear('date', $current_year)->whereMonth('date', $current_month)->sum('hours');
 
         // 今日の合計時間
-        $today_sum = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)->whereDay('date', $today)->sum('hours');
+        $today_sum = InputData::where('user', $id)->whereYear('date', $current_year)->whereMonth('date', $current_month)->whereDay('date', $today)->sum('hours');
 
 
         /* グラフ     
@@ -40,7 +41,7 @@ class WebappController extends Controller
         */
 
         // 棒グラフ  日毎の勉強時間をGroupByで集計
-        $chart_day = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
+        $chart_day = InputData::where('user', $id)->whereYear('date', $current_year)->whereMonth('date', $current_month)
             ->selectRaw('sum(hours) as `h`, date')
             ->groupByRaw('date')
             ->get();
@@ -126,11 +127,13 @@ class WebappController extends Controller
         */
 
         // $c5 = json_encode($hours_by_test2);
-        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c'));
+        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c','user_name'));
     }
 
     public function post(Request $request)
     {
+        $id = Auth::id();
+        $user_name = Auth::user()->name;
         $contents = $request->contents;
         $contents_length = count($contents);
 
@@ -145,6 +148,7 @@ class WebappController extends Controller
             foreach($contents as $content){
                     $input = new InputData();
                     $input->date = $request->date;
+                    $input->user = $id;
                     foreach($langs as $lang){
                     $input->languages = $lang; 
                     }
@@ -157,6 +161,7 @@ class WebappController extends Controller
                 foreach($langs as $lang){
                     $input = new InputData();
                     $input->date = $request->date;
+                    $input->user = $id;
                     foreach($contents as $content){
                         $input->contents = $content; 
                         }
@@ -188,6 +193,6 @@ class WebappController extends Controller
     
             $c = json_encode($chart_day);
 
-        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c'));
+        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'user_name'));
     }
 }

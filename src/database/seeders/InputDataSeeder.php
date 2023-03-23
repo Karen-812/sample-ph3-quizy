@@ -23,6 +23,7 @@ class InputDataSeeder extends Seeder
             'hours' => 1,
             'languages' => 0,
             'contents' => 2,
+            'user' => 3,
             'created_at' => $now,
             'updated_at' => $now,
         ];

@@ -1,38 +1,44 @@
 <!DOCTYPE html>
 <html lang="ja">
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <!-- Bootstrap CSS -->
-    <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"> -->
+<!-- Bootstrap CSS -->
+<!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-giJF6kkoqNQ00vy+HMDP7azOuL0xtbfIcaT9wjKHr8RbDVddVHyTfAAsrekwKmP1" crossorigin="anonymous"> -->
 
-    <!-- font awesome, calender -->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<!-- font awesome, calender -->
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/all.css" integrity="sha384-DyZ88mC6Up2uqS4h/KRgHuoeGwBcD4Ng9SiP4dIRy0EXTlnuz47vAwmeGwVChigm" crossorigin="anonymous">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 
-    <!-- stylesheet -->
-    <link href="https://unpkg.com/sanitize.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{{asset('./style.css')}}">
-    <title>@yield('title')</title>
+<!-- stylesheet -->
+<link href="https://unpkg.com/sanitize.css" rel="stylesheet" />
+<link rel="stylesheet" href="{{asset('./style.css')}}">
+<title>@yield('title')</title>
 
-    <!-- graph -->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-    <!-- json用 -->
-    <!-- <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+<!-- graph -->
+<script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+<!-- json用 -->
+<!-- <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script> -->
+
 <head>
 
 <body>
-<header class="header inner">
+    <header class="header inner">
         <h1>
             <img src="{{asset('/img/posseロゴ.jpg')}}" alt="POSSE">
         </h1>
         <p class="unit">@yield('week') week</p>
+        <p>ようこそ {{$user_name}}さん</p>
+        <form action="{{ route('logout') }}" method="post">
+            @csrf
+            <input type="submit" value="ログアウト">
+        </form>
         <div id="header_button" class="button" onclick="open_modal()">
             <p>記録・投稿</p>
         </div>
-</header>
+    </header>
 
     <div class="container">
         <section class="first_section">
@@ -56,7 +62,7 @@
                 <div class="card period">
                     Total
                     <p class="number">
-                    @yield('Total')
+                        @yield('Total')
                     </p>
                     <p class="unit">hour</p>
                 </div>
@@ -86,13 +92,13 @@
             <i class="fas fa-chevron-right blue"></i>
         </div>
     </section>
-    
+
     <footer class="footer">
         <div class="button2" onclick="open_modal()">
             <p>記録・投稿</p>
         </div>
     </footer>
-    
+
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
@@ -103,14 +109,14 @@
             <i class="fas fa-times grey"></i>
         </div>
         <form action="" method="post" id="modal_inside">
-        @csrf
-        <!-- <section id="modal_inside"> -->
+            @csrf
+            <!-- <section id="modal_inside"> -->
             <section class="upper_section">
                 <section class="modal_first">
-                        <div class="study_day inside">
+                    <div class="study_day inside">
                         <p>学習日</p>
                         <input type="text" name="date" class="input_box calender" id="calender">
-                        </div>
+                    </div>
                     <div class="study_contents inside modal_margin">
                         <p>学習コンテンツ(複数選択可)</p>
                         <div class="checkbox_outside grey">
