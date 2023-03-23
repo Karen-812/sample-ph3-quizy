@@ -1,8 +1,7 @@
 <?php
 
-use App\Http\Controllers\Admin\BigQuestionController;
-use App\Http\Controllers\Admin\QuizController as AdminQuizController;
 use App\Http\Controllers\QuizController;
+use App\Http\Controllers\WebappController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -16,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () { return redirect('/quiz'); });
+/* Route::get('/', function () { return redirect('/quiz'); });
 
 
 Route::middleware(['auth'])->group(function () {
@@ -25,12 +24,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/admin/edit/{id}', 'AdminController@edit');
     Route::get('/admin/add/{id}', 'AdminController@addIndex');
     Route::post('/admin/add/{id}', 'AdminController@add');
-    
-    // big question
-    Route::get('/admin/big_question/add', 'AdminController@bigQuestionAddIndex');
-    Route::post('/admin/big_question/add', 'AdminController@bigQuestionAdd');
-    Route::get('/admin/big_question/delete/{big_question_id}', 'AdminController@bigQuestionDeleteIndex');
-    Route::post('/admin/big_question/delete/{big_question_id}', 'AdminController@bigQuestionDelete');
+
 
     // 理想的なルーティング
     // // quiz
@@ -53,4 +47,13 @@ Route::middleware(['auth'])->group(function () {
 Route::get('/quiz', [QuizController::class, 'index'])->name('quiz.index');
 Route::get('/quiz/{id}', [QuizController::class, 'detail'])->whereNumber('id')->name('quiz.detail');
 
+*/
+Auth::routes();
 require __DIR__.'/auth.php';
+
+Route::get('/webapp/home', [WebappController::class, 'index']);
+Route::post('/webapp/home', [WebappController::class, 'post']);
+
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
