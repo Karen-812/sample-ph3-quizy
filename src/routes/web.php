@@ -3,6 +3,7 @@
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\WebappController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,9 +52,7 @@ Route::get('/quiz/{id}', [QuizController::class, 'detail'])->whereNumber('id')->
 Auth::routes();
 require __DIR__.'/auth.php';
 
-Route::get('/webapp/home', [WebappController::class, 'index']);
+Route::get('/webapp/home', [WebappController::class, 'index'])->middleware('auth');
 Route::post('/webapp/home', [WebappController::class, 'post']);
-
-Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
