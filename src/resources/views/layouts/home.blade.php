@@ -251,7 +251,6 @@
         let check_checkbox = document.getElementsById('checkboxes');
         if (check_checkbox.checked) {
             check_checkbox.parentNode.style.backgroundColor = '#0467ad';
-            // console.log('aaa')
         }
     }
 
@@ -289,7 +288,6 @@
             a.push([number, value_number])
         });
 
-        console.log(a);
         data.addRows(a);
 
         var options = {
@@ -347,7 +345,7 @@
     function drawChart() {
 
         // JSで整形！
-
+        var obj = <?php echo $c2; ?>
 
         let b = [];
         b.push(
@@ -361,7 +359,6 @@
             b.push([lang_number, time_number]);
         });
 
-        console.log([b]);
         // data.addRows([b]); arrayToDataTable と DataTableの違い
         var data = new google.visualization.arrayToDataTable(b);
 
@@ -409,7 +406,7 @@
 
     function drawChart2() {
         // JSで整形！
-
+        var obj = <?php echo $c3; ?>
 
         let c = [];
         c.push(
@@ -423,7 +420,6 @@
             c.push([cont_number, time_number]);
         });
 
-        console.log([c]);
         var data = new google.visualization.arrayToDataTable(c);
 
         var options = {

@@ -14,7 +14,7 @@ use Carbon\Carbon;
 
 class WebappController extends Controller
 {
-    
+
     public function index(Request $request)
     {
         $id = Auth::id();
@@ -42,10 +42,10 @@ class WebappController extends Controller
 
         // 棒グラフ  日毎の勉強時間をGroupByで集計
         $chart_day = InputData::where('user', $id)->whereYear('date', $current_year)->whereMonth('date', $current_month)
-            ->selectRaw('sum(hours) as `h`, date')
-            ->groupByRaw('date')
+        ->selectRaw('sum(hours) as `h`, date')
+        ->groupByRaw('date')
             ->get();
-
+            
         $c = json_encode($chart_day);
 
         // ドーナツグラフ1  言語毎の勉強時間
@@ -64,12 +64,13 @@ class WebappController extends Controller
                 ]);
             */
 
-        // $chart_language = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
-        // ->selectRaw('languages, (100.0 * sum(hours) / SUM(hours) AS lang_time')
-        // ->groupByRaw('languages')
-        // ->get();
+        $chart_language = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('languages, 100.0 * sum(hours) / SUM(hours) AS lang_time')
+            ->groupByRaw('languages')
+            ->get();
 
-        // $c2 = json_encode($chart_language);
+
+        $c2 = json_encode($chart_language);
 
 
         /* IDと学習言語名紐付け
@@ -101,16 +102,13 @@ class WebappController extends Controller
             ]);
             */
 
-        /* GROUP BY 使って集計
-        $cont_prepare = $pdo->prepare(
-            'SELECT `contents` , (100.0 * SUM(`hours`) / (SELECT SUM(`hours`) FROM input_data) ) AS cont_time
-            FROM input_data WHERE `date` LIKE :search 
-            GROUP BY `contents`'
-        );
-        $cont_prepare->execute(['search' => $search]);
-        $hours_by_cont = $cont_prepare->fetchAll();
+        // GROUP BY 使って集計
+        $chart_content = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('contents, 100.0 * sum(hours) / SUM(hours) AS cont_time')
+            ->groupByRaw('contents')
+            ->get();
 
-        $c3 = json_encode($hours_by_cont);
+        $c3 = json_encode($chart_content);
 
         /* IDと学習言語名紐付け
         $test_prepare = $pdo->prepare(
@@ -127,7 +125,7 @@ class WebappController extends Controller
         */
 
         // $c5 = json_encode($hours_by_test2);
-        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c','user_name'));
+        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'c2', 'c3', 'user_name'));
     }
 
     public function post(Request $request)
@@ -141,58 +139,79 @@ class WebappController extends Controller
         $langs_length = count($langs);
 
         $hours = $request->hours;
-        $hours_per_content = $hours/$contents_length;
-        $hours_per_lang = $hours/$langs_length;
+        $hours_per_content = $hours / $contents_length;
+        $hours_per_lang = $hours / $langs_length;
 
-        if($contents_length > 1){
-            foreach($contents as $content){
-                    $input = new InputData();
-                    $input->date = $request->date;
-                    $input->user = $id;
-                    foreach($langs as $lang){
-                    $input->languages = $lang; 
-                    }
-                    $input->contents = intval($content);
-                    $input->hours = $hours_per_content;
-                    $input->save();
-                    // ✅カラムメイ、input
+        if ($contents_length > 1) {
+            foreach ($contents as $content) {
+                $input = new InputData();
+                $input->date = $request->date;
+                $input->user = $id;
+                foreach ($langs as $lang) {
+                    $input->languages = $lang;
                 }
-            } else if($langs_length > 1){
-                foreach($langs as $lang){
-                    $input = new InputData();
-                    $input->date = $request->date;
-                    $input->user = $id;
-                    foreach($contents as $content){
-                        $input->contents = $content; 
-                        }
-                    $input->languages = intval($lang); 
-                $input->hours = $hours_per_lang;   
+                $input->contents = intval($content);
+                $input->hours = $hours_per_content;
+                $input->save();
+                // ✅カラムメイ、input
+            }
+        } else if ($langs_length > 1) {
+            foreach ($langs as $lang) {
+                $input = new InputData();
+                $input->date = $request->date;
+                $input->user = $id;
+                foreach ($contents as $content) {
+                    $input->contents = $content;
+                }
+                $input->languages = intval($lang);
+                $input->hours = $hours_per_lang;
                 $input->save();
             }
+        }else{
+            $input = new InputData();
+            $input->date = $request->date;
+            $input->user = $id;
+            foreach ($contents as $content) {
+                $input->contents = $content;
+            }
+            foreach ($langs as $lang) {
+                $input->languages = $lang;
+            }
+            $input->hours = $hours;
+            $input->save();
         }
 
-            // 現在の時刻からインスタンスを生成
-            $current_year = Carbon::now()->format('Y');
-            $current_month = Carbon::now()->format('m');
-            $today = Carbon::now()->format('d');
-    
-            // トータル時間
-            $total_sum = InputData::sum('hours');
-    
-            // 今月の合計時間
-            $month_sum = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)->sum('hours');
-    
-            // 今日の合計時間
-            $today_sum = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)->whereDay('date', $today)->sum('hours');
+        // 現在の時刻からインスタンスを生成
+        $current_year = Carbon::now()->format('Y');
+        $current_month = Carbon::now()->format('m');
+        $today = Carbon::now()->format('d');
 
-            // 棒グラフ  日毎の勉強時間をGroupByで集計
-            $chart_day = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
-                ->selectRaw('sum(hours) as `h`, date')
-                ->groupByRaw('date')
-                ->get();
-    
-            $c = json_encode($chart_day);
+        // トータル時間
+        $total_sum = InputData::sum('hours');
 
-        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'user_name'));
+        // 今月の合計時間
+        $month_sum = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)->sum('hours');
+
+        // 今日の合計時間
+        $today_sum = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)->whereDay('date', $today)->sum('hours');
+
+        // 棒グラフ  日毎の勉強時間をGroupByで集計
+        $chart_day = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('sum(hours) as `h`, date')->groupByRaw('date')->get();
+        $c = json_encode($chart_day);
+
+        // ドーナツグラフ1  言語毎の勉強時間
+        $chart_language = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('languages, 100.0 * sum(hours) / SUM(hours) AS lang_time')
+            ->groupByRaw('languages')->get();
+        $c2 = json_encode($chart_language);
+
+        // GROUP BY 使って集計
+        $chart_content = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('contents, 100.0 * sum(hours) / SUM(hours) AS cont_time')
+            ->groupByRaw('contents')->get();
+        $c3 = json_encode($chart_content);
+
+        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c',  'c2', 'c3', 'user_name'));
     }
 }
