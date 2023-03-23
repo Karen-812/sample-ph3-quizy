@@ -14,7 +14,7 @@
 
     <!-- stylesheet -->
     <link href="https://unpkg.com/sanitize.css" rel="stylesheet" />
-    <link rel="stylesheet" href="{{asset('/style.css')}}">
+    <link rel="stylesheet" href="{{asset('./style.css')}}">
     <title>@yield('title')</title>
 
     <!-- graph -->
@@ -26,7 +26,7 @@
 <body>
 <header class="header inner">
         <h1>
-            <img src="{{asset('/posse_logo.jpeg')}}" alt="POSSE">
+            <img src="{{asset('/img/posseロゴ.jpg')}}" alt="POSSE">
         </h1>
         <p class="unit">@yield('week') week</p>
         <div id="header_button" class="button" onclick="open_modal()">
@@ -96,6 +96,130 @@
     <!-- Option 1: Bootstrap Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta1/dist/js/bootstrap.bundle.min.js" integrity="sha384-ygbV9kiqUc6oa4msXn9868pTtWMgiQaeYH7/t7LECLbyPA2x65Kgf80OJFdroafW" crossorigin="anonymous"></script>
 
+
+    <!-- モーダルだよ🍩 -->
+    <div id="modal_content" class="modal_closed">
+        <div onclick="close_modal()" class="close_button">
+            <i class="fas fa-times grey"></i>
+        </div>
+        <form action="" method="post" id="modal_inside">
+        @csrf
+        <!-- <section id="modal_inside"> -->
+            <section class="upper_section">
+                <section class="modal_first">
+                        <div class="study_day inside">
+                        <p>学習日</p>
+                        <input type="text" name="date" class="input_box calender" id="calender">
+                        </div>
+                    <div class="study_contents inside modal_margin">
+                        <p>学習コンテンツ(複数選択可)</p>
+                        <div class="checkbox_outside grey">
+                            <label>
+                                <input type="checkbox" name="contents[]" value="1" class="checkbox" id="checkboxes" onclick="checkcheck()">
+                                <span class="checkmark"></span>
+                                N予備校
+                            </label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label>
+                                <input type="checkbox" name="contents[]" value="2" class="checkbox">
+                                <span class="checkmark"></span>
+                                ドットインストール
+                            </label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label>
+                                <input type="checkbox" name="contents[]" value="3" class="checkbox">
+                                <span class="checkmark"></span>
+                                POSSE課題
+                            </label>
+                        </div>
+                    </div>
+                    <div class="study_languages inside modal_margin">
+                        <p>学習言語(複数選択可)</p>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="1">
+                                <span class="checkmark"></span>
+                                HTML</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="2">
+                                <span class="checkmark"></span>
+                                CSS</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="3">
+                                <span class="checkmark"></span>
+                                JavaScript</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="4">
+                                <span class="checkmark"></span>
+                                PHP</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="5">
+                                <span class="checkmark"></span>
+                                Laravel</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="6">
+                                <span class="checkmark"></span>
+                                SQL</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="7">
+                                <span class="checkmark"></span>
+                                SHELL</label>
+                        </div>
+                        <div class="checkbox_outside grey">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="8">
+                                <span class="checkmark"></span>
+                                情報システム基礎知識(その他)</label>
+                        </div>
+                </section>
+                <section class="modal_second">
+                    <div class="study_hour inside">
+                        <p>学習時間</p>
+                        <input type="text" class="input_box" name="hours">
+                    </div>
+                    <div class="twitter_comment inside modal_margin">
+                        <p>Twitter用コメント</p>
+                        <input type="text" name="message" class="input_box comment" id="twitter_com">
+                        <!-- <textarea name="twitter_com" id="twitter_com" class="input_box comment"></textarea> -->
+                    </div>
+                    <div class="twitter inside">
+                        <label>
+                            <input type="checkbox" id="tweet" class="checkbox">
+                            <span class="checkmark big_check"></span>
+                            Twitterに自動投稿する
+                        </label>
+                    </div>
+                </section>
+            </section>
+            <section class="under_section">
+                <!-- <div class="modal_button" onclick="post()">記録・投稿</div> -->
+                <button class="modal_button" onclick="post()">記録・投稿</button>
+            </section>
+        </form>
+
+
+        <!-- ローディング・投稿完了画面 -->
+        <section class="before_post" id="posted1">
+            <div class="loader-wrap">
+                <div class="loader">Loading...</div>
+            </div>
+        </section>
+
+        <section class="before_post" id="posted">
+            <p class="green">AWESOME!</p>
+            <i class="fas fa-check-circle green checkmark2"></i>
+            <p>記録・投稿</p>
+            <p>完了しました</p>
+        </section>
+
+        <!-- <p><a id="modal-close" class="button-link">閉じる</a></p> -->
+    </div>
 </body>
 <!-------------- ここからPhase2 -------------->
 
@@ -106,7 +230,7 @@
 <script type="text/javascript">
     let calender = document.getElementById("calender");
     let fp = flatpickr(calender, {
-        dateFormat: "Y年n月j日", // フォーマットの変更
+        dateFormat: "Y-n-j", // フォーマットの変更
     });
 
     function open_modal() {
@@ -128,15 +252,13 @@
     function post() {
         document.getElementById("posted1").className = "after_post2";
         setTimeout(function() {
+            document.getElementById("posted1").className = "hidden";
             document.getElementById("posted").className = "after_post";
+            document.getElementById("modal_inside").className = "hidden";
             // document.getElementsByClassName('upper_section').className = 'invisible'
             // document.getElementsByClassName('under_section').className = 'invisible'
-            document.getElementById("modal_inside").className = "hidden";
             tweet();
-        }, 3000);
-        setTimeout(function() {
-            document.getElementById("posted1").className = "hidden";
-        }, 3000);
+        }, 1000);
 
     }
 
@@ -219,7 +341,7 @@
     function drawChart() {
 
         // JSで整形！
-        var obj = <?php echo $c4; ?>;
+
 
         let b = [];
         b.push(
@@ -281,7 +403,7 @@
 
     function drawChart2() {
         // JSで整形！
-        var obj = <?php echo $c5; ?>;
+
 
         let c = [];
         c.push(
