@@ -816,3 +816,10 @@ body {
     }
   }
   
+  table th {/*table内のthに対して*/
+    padding: 10px;/*上下左右10pxずつ*/
+  }
+  
+  table td {/*table内のtdに対して*/
+    padding: 3px 10px;/*上下3pxで左右10px*/
+  }
