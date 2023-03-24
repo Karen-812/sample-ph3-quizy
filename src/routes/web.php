@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\QuizController;
 use App\Http\Controllers\WebappController;
+use App\Http\Controllers\AdminController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Auth;
 
@@ -54,5 +55,15 @@ require __DIR__.'/auth.php';
 
 Route::get('/webapp/home', [WebappController::class, 'index'])->middleware('auth');
 Route::post('/webapp/home', [WebappController::class, 'post']);
+
+Route::get('/webapp/admin/home', [AdminController::class, 'index'])->middleware('auth');;
+Route::post('/webapp/admin/home/content', [AdminController::class, 'content_change'])->middleware('auth')->name('admin.content_change');
+Route::post('/webapp/admin/home/language', [AdminController::class, 'language_change'])->middleware('auth')->name('admin.language_change');
+Route::post('/webapp/admin/home/content_new', [AdminController::class, 'content_add'])->middleware('auth')->name('admin.content_add');
+Route::post('/webapp/admin/home/language_new', [AdminController::class, 'language_add'])->middleware('auth')->name('admin.language_add');
+
+Route::get('/webapp/admin/home/user', [AdminController::class, 'user_index'])->middleware('auth');
+Route::get('/webapp/admin/home/user/change', [AdminController::class, 'user_change'])->middleware('auth')->name('admin.user_change');
+Route::post('/webapp/admin/home/user/add', [AdminController::class, 'user_add'])->middleware('auth')->name('admin.user_add');
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
