@@ -119,70 +119,27 @@
                     </div>
                     <div class="study_contents inside modal_margin">
                         <p>学習コンテンツ(複数選択可)</p>
+                        @foreach($contents as $content)
                         <div class="checkbox_outside grey">
                             <label>
-                                <input type="checkbox" name="contents[]" value="1" class="checkbox" id="checkboxes" onclick="checkcheck()">
+                                <input type="checkbox" name="contents[]" value="{{$content->id}}" class="checkbox" id="checkboxes" onclick="checkcheck()">
                                 <span class="checkmark"></span>
-                                N予備校
+                                {{$content->name}}
                             </label>
                         </div>
-                        <div class="checkbox_outside grey">
-                            <label>
-                                <input type="checkbox" name="contents[]" value="2" class="checkbox">
-                                <span class="checkmark"></span>
-                                ドットインストール
-                            </label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label>
-                                <input type="checkbox" name="contents[]" value="3" class="checkbox">
-                                <span class="checkmark"></span>
-                                POSSE課題
-                            </label>
-                        </div>
+                        @endforeach
                     </div>
                     <div class="study_languages inside modal_margin">
                         <p>学習言語(複数選択可)</p>
+                        @foreach($languages as $language)
                         <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="1">
+                            <label><input type="checkbox" class="checkbox" name="langs[]" value="{{$language->id}}">
                                 <span class="checkmark"></span>
-                                HTML</label>
+                                {{$language->name}}
+                            </label>
                         </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="2">
-                                <span class="checkmark"></span>
-                                CSS</label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="3">
-                                <span class="checkmark"></span>
-                                JavaScript</label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="4">
-                                <span class="checkmark"></span>
-                                PHP</label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="5">
-                                <span class="checkmark"></span>
-                                Laravel</label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="6">
-                                <span class="checkmark"></span>
-                                SQL</label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="7">
-                                <span class="checkmark"></span>
-                                SHELL</label>
-                        </div>
-                        <div class="checkbox_outside grey">
-                            <label><input type="checkbox" class="checkbox" name="langs[]" value="8">
-                                <span class="checkmark"></span>
-                                情報システム基礎知識(その他)</label>
-                        </div>
+                        @endforeach
+                    </div>
                 </section>
                 <section class="modal_second">
                     <div class="study_hour inside">

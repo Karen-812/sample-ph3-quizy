@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\InputData;
+use App\Models\Content;
+use App\Models\Language;
 use Illuminate\Support\Facade;
 use Illuminate\Support\Facades\Auth;
 // Carbon
@@ -63,7 +65,12 @@ class WebappController extends Controller
             ->groupByRaw('contents.name')
             ->get();
         $c3 = json_encode($chart_contents);
-        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'c2', 'c3', 'user_name'));
+
+        // コンテンツ名
+        $contents = Content::where('is_modal', '1')->get();
+        // 言語名
+        $languages = Language::where('is_modal', '1')->get();
+        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'c2', 'c3', 'user_name','contents', 'languages'));
     }
 
     public function post(Request $request)
@@ -158,7 +165,10 @@ class WebappController extends Controller
             ->groupByRaw('contents.name')
             ->get();
         $c3 = json_encode($chart_contents);
-
-        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c',  'c2', 'c3', 'user_name'));
+        // コンテンツ名
+        $contents = Content::where('is_modal', '1')->get();
+        // 言語名
+        $languages = Language::where('is_modal', '1')->get();
+        return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'c2', 'c3', 'user_name','contents', 'languages'));
     }
 }
