@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\InputData;
 use App\Models\Content;
 use App\Models\Language;
+use App\Models\User;
 use Illuminate\Support\Facade;
 use Illuminate\Support\Facades\Auth;
 // Carbon
@@ -16,6 +17,14 @@ use Carbon\Carbon;
 
 class WebappController extends Controller
 {
+
+    public function user_edit(Request $request)
+    {
+        $id = Auth::id();
+        $user = User::find($id);
+        dd($user);
+        return view('user.edit_info', compact('user'));
+    }
 
     public function index(Request $request)
     {
