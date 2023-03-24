@@ -34,43 +34,28 @@ class WebappController extends Controller
         // 今日の合計時間
         $today_sum = InputData::where('user', $id)->whereYear('date', $current_year)->whereMonth('date', $current_month)->whereDay('date', $today)->sum('hours');
 
-
-        /* グラフ     
-        // 方針：PHPでしか使えない形 → エンコード → JS → グラフ用にさらに整形
-        // PHPである程度整える →エンコードもあり
-        */
-
         // 棒グラフ  日毎の勉強時間をGroupByで集計
         $chart_day = InputData::where('user', $id)->whereYear('date', $current_year)->whereMonth('date', $current_month)
         ->selectRaw('sum(hours) as `h`, date')
         ->groupByRaw('date')
-            ->get();
+        ->get();
             
         $c = json_encode($chart_day);
 
         // ドーナツグラフ1  言語毎の勉強時間
-        /*
-            function drawChart() {
-                var data = google.visualization.arrayToDataTable([
-                    ["laguage", "portion"],
-                    ["HTML", 30],
-                    ["CSS", 20],
-                    ["JavaScript", 10],
-                    ["PHP", 5],
-                    ["Laravel", 5],
-                    ["SQL", 20],
-                    ["SHELL", 20],
-                    ["その他", 10],
-                ]);
-            */
 
-        $chart_language = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
-            ->selectRaw('languages, 100.0 * sum(hours) / SUM(hours) AS lang_time')
-            ->groupByRaw('languages')
-            ->get();
+        // 疑問：join句以外のやり方
+        $chart_languages = InputData::join('languages', 'languages.id', '=', 'input_data.language_id')
+        ->whereYear('date', $current_year)->whereMonth('date', $current_month)
+        ->selectRaw('languages.name, sum(hours) AS lang_time')
+        ->groupByRaw('languages.name')
+        ->get();
+        
+        foreach($chart_languages as $chart_language){
+            $chart_language['lang_time'] = 100 * $chart_language['lang_time']/$total_sum;
+        }
 
-
-        $c2 = json_encode($chart_language);
+        $c2 = json_encode($chart_languages);
 
 
         /* IDと学習言語名紐付け
@@ -103,12 +88,13 @@ class WebappController extends Controller
             */
 
         // GROUP BY 使って集計
-        $chart_content = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
-            ->selectRaw('contents, 100.0 * sum(hours) / SUM(hours) AS cont_time')
-            ->groupByRaw('contents')
+        $chart_contents = InputData::join('contents', 'contents.id', '=', 'input_data.content_id')
+            ->whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('contents.name, SUM(hours) AS cont_time')
+            ->groupByRaw('contents.name')
             ->get();
 
-        $c3 = json_encode($chart_content);
+        $c3 = json_encode($chart_contents);
 
         /* IDと学習言語名紐付け
         $test_prepare = $pdo->prepare(
@@ -148,9 +134,9 @@ class WebappController extends Controller
                 $input->date = $request->date;
                 $input->user = $id;
                 foreach ($langs as $lang) {
-                    $input->languages = $lang;
+                    $input->language_id = $lang;
                 }
-                $input->contents = intval($content);
+                $input->content_id = intval($content);
                 $input->hours = $hours_per_content;
                 $input->save();
                 // ✅カラムメイ、input
@@ -161,9 +147,9 @@ class WebappController extends Controller
                 $input->date = $request->date;
                 $input->user = $id;
                 foreach ($contents as $content) {
-                    $input->contents = $content;
+                    $input->content_id = $content;
                 }
-                $input->languages = intval($lang);
+                $input->language_id = intval($lang);
                 $input->hours = $hours_per_lang;
                 $input->save();
             }
@@ -172,10 +158,10 @@ class WebappController extends Controller
             $input->date = $request->date;
             $input->user = $id;
             foreach ($contents as $content) {
-                $input->contents = $content;
+                $input->content_id = $content;
             }
             foreach ($langs as $lang) {
-                $input->languages = $lang;
+                $input->language_id = $lang;
             }
             $input->hours = $hours;
             $input->save();
@@ -201,16 +187,25 @@ class WebappController extends Controller
         $c = json_encode($chart_day);
 
         // ドーナツグラフ1  言語毎の勉強時間
-        $chart_language = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
-            ->selectRaw('languages, 100.0 * sum(hours) / SUM(hours) AS lang_time')
-            ->groupByRaw('languages')->get();
-        $c2 = json_encode($chart_language);
+        $chart_languages = InputData::join('languages', 'languages.id', '=', 'input_data.language_id')
+        ->whereYear('date', $current_year)->whereMonth('date', $current_month)
+        ->selectRaw('languages.name, sum(hours) AS lang_time')
+        ->groupByRaw('languages.name')
+        ->get();
+        
+        foreach($chart_languages as $chart_language){
+            $chart_language['lang_time'] = 100 * $chart_language['lang_time']/$total_sum;
+        }
+
+        $c2 = json_encode($chart_languages);
 
         // GROUP BY 使って集計
-        $chart_content = InputData::whereYear('date', $current_year)->whereMonth('date', $current_month)
-            ->selectRaw('contents, 100.0 * sum(hours) / SUM(hours) AS cont_time')
-            ->groupByRaw('contents')->get();
-        $c3 = json_encode($chart_content);
+        $chart_contents = InputData::join('contents', 'contents.id', '=', 'input_data.content_id')
+            ->whereYear('date', $current_year)->whereMonth('date', $current_month)
+            ->selectRaw('contents.name, SUM(hours) AS cont_time')
+            ->groupByRaw('contents.name')
+            ->get();
+        $c3 = json_encode($chart_contents);
 
         return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c',  'c2', 'c3', 'user_name'));
     }

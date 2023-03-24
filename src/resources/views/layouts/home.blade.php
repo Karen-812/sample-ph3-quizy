@@ -354,9 +354,10 @@
 
         obj.forEach(function(value, index) {
             // let lang_number = value.languages.toString();
-            let lang_number = value.language;
+            // console.log(value.lang_time);
+            let lang_name = value.name;
             let time_number = Math.floor(value.lang_time);
-            b.push([lang_number, time_number]);
+            b.push([lang_name, time_number]);
         });
 
         // data.addRows([b]); arrayToDataTable と DataTableの違い
@@ -415,7 +416,7 @@
 
         obj.forEach(function(value, index) {
             // let cont_number = value.contents.toString();
-            let cont_number = value.content;
+            let cont_number = value.name;
             let time_number = Math.floor(value.cont_time);
             c.push([cont_number, time_number]);
         });

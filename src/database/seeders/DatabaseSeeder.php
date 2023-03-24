@@ -20,6 +20,8 @@ class DatabaseSeeder extends Seeder
             QuestionSeeder::class,
             ChoiceSeeder::class,
             InputDataSeeder::class,
+            LanguageSeeder::class,
+            ContentSeeder::class,
         ]);
     }
 }

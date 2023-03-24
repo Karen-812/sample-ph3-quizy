@@ -13,15 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('input_data', function (Blueprint $table) {
+        Schema::create('languages', function (Blueprint $table) {
             $table->id();
-            $table->date('date');
-            // $table->unsignedBigInteger('');
-            $table->integer('hours');
-            $table->integer('language_id');
-            $table->integer('content_id');
-            $table->integer('user');
-            $table->timestamps();
+            $table->string('name');
+            $table->boolean('is_modal');
         });
     }
 
@@ -32,6 +27,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('input_data');
+        Schema::dropIfExists('languages');
     }
 };
