@@ -39,11 +39,9 @@ class WebappController extends Controller
         ->selectRaw('sum(hours) as `h`, date')
         ->groupByRaw('date')
         ->get();
-            
         $c = json_encode($chart_day);
 
         // ドーナツグラフ1  言語毎の勉強時間
-
         // 疑問：join句以外のやり方
         $chart_languages = InputData::join('languages', 'languages.id', '=', 'input_data.language_id')
         ->whereYear('date', $current_year)->whereMonth('date', $current_month)
@@ -54,63 +52,17 @@ class WebappController extends Controller
         foreach($chart_languages as $chart_language){
             $chart_language['lang_time'] = 100 * $chart_language['lang_time']/$total_sum;
         }
-
         $c2 = json_encode($chart_languages);
-
-
-        /* IDと学習言語名紐付け
-        $test_prepare = $pdo->prepare(
-            'SELECT language_num.language, (100.0 * SUM(`hours`) / (SELECT SUM(`hours`) FROM input_data) ) AS lang_time
-            FROM input_data 
-            -- AS test_time
-            INNER JOIN language_num
-            ON
-            input_data.languages = language_num.id
-            WHERE `date` LIKE :search 
-            GROUP BY `languages`;'
-        );
-        $test_prepare->execute(['search' => $search]);
-        $hours_by_test = $test_prepare->fetchAll();
-        */
-
-        // $c4 = json_encode($hours_by_test);
 
 
 
         // ドーナツグラフ2  コンテンツ毎の勉強時間
-        /*
-            var data = google.visualization.arrayToDataTable([
-                ["content", "portion"],
-                ["N予備校", 40],
-                ["ドットインストール", 20],
-                ["課題", 40],
-            ]);
-            */
-
-        // GROUP BY 使って集計
         $chart_contents = InputData::join('contents', 'contents.id', '=', 'input_data.content_id')
             ->whereYear('date', $current_year)->whereMonth('date', $current_month)
             ->selectRaw('contents.name, SUM(hours) AS cont_time')
             ->groupByRaw('contents.name')
             ->get();
-
         $c3 = json_encode($chart_contents);
-
-        /* IDと学習言語名紐付け
-        $test_prepare = $pdo->prepare(
-            'SELECT content_num.content, (100.0 * SUM(`hours`) / (SELECT SUM(`hours`) FROM input_data) ) AS cont_time
-            FROM input_data
-            INNER JOIN content_num
-            ON
-            input_data.contents = content_num.id
-            WHERE `date` LIKE :search 
-            GROUP BY `contents`;'
-        );
-        $test_prepare->execute(['search' => $search]);
-        $hours_by_test2 = $test_prepare->fetchAll();
-        */
-
-        // $c5 = json_encode($hours_by_test2);
         return view('user.home', compact('total_sum', 'month_sum', 'today_sum', 'c', 'c2', 'c3', 'user_name'));
     }
 
@@ -199,7 +151,7 @@ class WebappController extends Controller
 
         $c2 = json_encode($chart_languages);
 
-        // GROUP BY 使って集計
+        // ドーナツグラフ2  コンテンツ毎の勉強時間
         $chart_contents = InputData::join('contents', 'contents.id', '=', 'input_data.content_id')
             ->whereYear('date', $current_year)->whereMonth('date', $current_month)
             ->selectRaw('contents.name, SUM(hours) AS cont_time')
