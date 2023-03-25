@@ -38,9 +38,10 @@ Auth::routes();
 require __DIR__ . '/auth.php';
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-Route::get('/webapp/home', [WebappController::class, 'index'])->middleware('auth');
+Route::get('/webapp/home', [WebappController::class, 'index'])->middleware('auth')->name('user_home');
 Route::post('/webapp/home', [WebappController::class, 'post']);
-Route::get('/webapp/home/user/edit', [WebappController::class, 'user_edit'])->middleware('auth')->name('user_edit');
+Route::get('/webapp/home/user_edit', [WebappController::class, 'user_edit'])->name('user_edit');
+Route::post('/webapp/home/user_edit', [WebappController::class, 'user_change'])->name('user_change');
 Route::get('/webapp/home/news', [NewsController::class, 'index']);
 Route::get('/webapp/home/news/{id}', [NewsController::class, 'detail']);
 

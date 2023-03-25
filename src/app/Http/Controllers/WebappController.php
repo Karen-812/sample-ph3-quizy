@@ -17,15 +17,19 @@ use Carbon\Carbon;
 
 class WebappController extends Controller
 {
-
     public function user_edit(Request $request)
     {
         $id = Auth::id();
+        $user_infos = User::where('id',$id)->get();
+        return view('editInfo', compact('user_infos'));
+    }    
+    public function user_change(Request $request)
+    {
+        $id = Auth::id();
         $user = User::find($id);
-        dd($user);
-        return view('user.edit_info', compact('user'));
+        $user->fill(['name' => $request->name, 'email'=> $request->email])->save();
+        return redirect("/webapp/home/user_edit");
     }
-
     public function index(Request $request)
     {
         $id = Auth::id();
